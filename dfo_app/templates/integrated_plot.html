@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+
+  <div class="col-lg-12">
+
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Choose plot
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="integrated_plot_plot1">DTS only</a>
+        <a class="dropdown-item" href="integrated_plot_plot2">DAS only</a>
+        <a class="dropdown-item" href="#">DTS and DAS</a>
+        <a class="dropdown-item" href="#">DTS and PT</a>
+        <a class="dropdown-item" href="#">DAS and PT</a>
+        <a class="dropdown-item" href="#">DTS, DAS and PT</a>
+      </div>
+    </div>
+
+    <br>
+    <!-- <a href="plot_config">Configure plots</a> -->
+    <a class="btn btn-secondary" href="config_plot" role="button">Configure plots</a>
+
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+  var session;
+  session={{ session|safe }};
+
+
+</script>
+
+{% endblock %}

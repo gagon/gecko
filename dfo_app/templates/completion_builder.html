@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+
+
+
+<!-- <hr> -->
+<div class="row">
+  <div class="col-lg-6">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#exampleModal" style="margin-bottom:20px;width:50%" id="add_new_comp">
+      Add component
+    </button>
+    <button type="button" class="btn btn-info" id="save_completion" style="margin-bottom:20px;width:49%">Save</button>
+
+    <table class="table table-bordered" id="completion_table">
+      <thead>
+        <tr>
+          <th scope="col">Order</th>
+          <th scope="col">Equipment type</th>
+          <th scope="col">Depth start, {{session.depth_unit}}</th>
+          <th scope="col">Depth end, {{session.depth_unit}}</th>
+          <th scope="col">ID, {{session.pipe_id_unit}}</th>
+          <th scope="col">Edit/Delete</th>
+        </tr>
+      </thead>
+      <tbody id="completion_table_body">
+      </tbody>
+    </table>
+
+
+
+  </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Completion component</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <form>
+
+          <div class="form-group">
+            <label for="exampleFormControlInput1">Order</label>
+            <input type="text" class="form-control" id="order" value="" required>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Component type</label>
+            <select class="form-control" id="type">
+              <option>Casing</option>
+              <option>Tubing</option>
+              <option>Production packer</option>
+              <option>ESP</option>
+              <option>Gaslift mandrel</option>
+              <option>Other</option>
+              <option>Perforation</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="exampleFormControlInput1">Depth start, {{session.depth_unit}}</label>
+            <input type="text" class="form-control" id="start" value="" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput1">Depth end, {{session.depth_unit}}</label>
+            <input type="text" class="form-control" id="end" value="">
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput1">ID, {{session.pipe_id_unit}}</label>
+            <input type="text" class="form-control" id="id" value="">
+          </div>
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-info" id="add" data-dismiss="modal">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+  var socket = io.connect("http://" + document.domain + ":" + location.port);
+
+  // var session;
+  var session={{ session|safe }};
+  var templates={{ completion_templates|safe }};
+  var completion={{ completion|safe }};
+  // console.log(session);
+
+  var table_modify_mode="add"
+  var curr_row;
+  var type_dict=templates.id
+  var type_dict_reversed=swap(type_dict)
+
+  $( document ).ready(function() {
+
+    build_table(completion.table);
+
+    $("#add_new_comp").click(function(e) {
+      table_modify_mode="add";
+      reset_modal_vals();
+      $("#order").val($('#completion_table tr').length)
+    })
+
+    $("#add").click(function(e) {
+      row={}
+      row=get_completion_component_vals(row)
+      add_element(row,table_modify_mode);
+    })
+
+
+    $("#save_completion").click(function(e) {
+      var resp=confirm("Proceed to save?")
+      if (resp){
+        var completion_table=[]
+        var cols=["order","type","start","end","id"]
+
+
+        $('#completion_table_body tr').each(function () {
+          row={}
+          for(let i = 0; i < cols.length; i++){
+            var val=$(this).find("td").eq(i).text()
+            if (i==1){
+              row[cols[i]]=type_dict[val];
+            }else{
+              row[cols[i]]=val;
+            }
+
+          }
+          completion_table.push(row)
+        });
+      }
+      // console.log(completion_table.slice(1));
+      socket.emit("save_completion",completion_table.slice(1))
+    })
+
+
+    $(document).on('click','#delrow',function() {
+      $(this).parent().parent().remove();
+      fix_orders_after_delete();
+    });
+
+    $(document).on('click','#editrow',function() {
+      table_modify_mode="edit"
+      curr_row=$(this).parent().parent();
+      var vals={}
+      var cols=["order","type","start","end","id"]
+      i=0
+      curr_row.find("td").each(function(){
+        vals[cols[i]]=$(this).html();
+        i++
+      });
+      console.log(vals);
+      set_modal_vals(vals);
+    });
+
+  });
+
+
+  function fix_orders_after_delete(){
+    i=0
+    $('#completion_table_body tr').each(function () {
+      $(this).find("td").eq(0).text(i)
+      i++
+    });
+
+  }
+
+  function set_modal_vals(vals){
+    $("#order").val(vals["order"])
+    $("#type").val(vals["type"])
+    $("#start").val(vals["start"])
+    $("#end").val(vals["end"])
+    $("#id").val(vals["id"])
+  }
+
+  function reset_modal_vals(){
+    $("#order").val("")
+    $("#type").val("")
+    $("#start").val("")
+    $("#end").val("")
+    $("#id").val("")
+  }
+
+  function get_completion_component_vals(row){
+    row["order"]=$("#order").val()
+    row["type"]=$("#type").val()
+    row["start"]=$("#start").val()
+    row["end"]=$("#end").val()
+    row["id"]=$("#id").val()
+    return row
+  }
+
+  function sortTable(table_id){
+    var rows = $('#'+table_id+'  tr').get();
+
+    rows.sort(function(a, b) {
+
+      var A = $(a).children('td').eq(0).text().toUpperCase();
+      var B = $(b).children('td').eq(0).text().toUpperCase();
+
+      if(A < B) {
+        return -1;
+      }
+
+      if(A > B) {
+        return 1;
+      }
+
+      return 0;
+
+    });
+
+    $.each(rows, function(index, row) {
+      $('#'+table_id).children('tbody').append(row);
+    });
+  }
+
+  socket.on("plot_completion", function(data) {
+    alert("I will plot soon");
+  });
+
+  function add_element(row,mode){
+
+    table_row='<tr>' +
+              '  <td name="order">'+row["order"]+'</td>' +
+              '  <td name="type">'+row["type"]+'</td>' +
+              '  <td name="start">'+row["start"]+'</td>' +
+              '  <td name="end">'+row["end"]+'</td>' +
+              '  <td name="id">'+row["id"]+'</td>' +
+              '  <td>' +
+              '    <button type="button" id="editrow" data-toggle="modal"  data-target="#exampleModal" style="margin-left:10px">Edit</button>' +
+              '    <button type="button" id="delrow" style="margin-left:10px">Delete</button>' +
+              '  </td>' +
+              '</tr>'
+
+
+    if (mode=="add"){
+      $("#completion_table_body").append(table_row);
+    }else if(mode="edit"){
+      curr_row.after(table_row);
+      curr_row.remove();
+
+    }
+
+    sortTable("completion_table");
+
+  }
+
+
+  function build_table(table){
+    for(let i = 0; i < table.length; i++){
+      row=table[i]
+      row["type"]=type_dict_reversed[row["type"]]
+      add_element(row,"add");
+    }
+  }
+
+
+  function swap(json){
+    var ret = {};
+    for(var key in json){
+      ret[json[key]] = key;
+    }
+    return ret;
+  }
+
+
+</script>
+
+
+
+
+{% endblock %}

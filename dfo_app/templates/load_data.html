@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-4">
+
+
+    <p>Raw DTS folder:</p>
+    <p>{{session.raw_dts_folder}}</p>
+    <p>Output DTS folder:</p>
+    <p>{{session.output_dts_folder}}</p>
+
+    <button type="button" class="btn btn-info" id="load" style="width:100%">Load</button>
+
+    <img src="/static/img/loading.gif" alt="" id="loading_img" style="margin-top:10px;height:50px">
+
+    <div id="results">
+      <hr>
+      <h5>Timestamp intervals histogram</h5>
+      <table class="table table-bordered table-small" id="dt_table">
+        <thead>
+          <tr>
+            <th scope="col">Bins, minutes</th>
+            <th scope="col">Frequency</th>
+          </tr>
+        </thead>
+        <tbody id="dt_table_body">
+        </tbody>
+      </table>
+      <h5 id="timestamp_attr">Timestamp min max</h5>
+      <hr>
+      <h5 id="depth_attr">Depths intervals</h5>
+
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var session;
+  session={{ session|safe }};
+  // console.log(session);
+
+  $("#loading_img").hide();
+  $("#results").hide();
+
+  $( document ).ready(function() {
+
+    $('#load').click(function(e) {
+      socket.emit("load_data",session.raw_dts_folder,session.output_dts_folder)
+      $("#loading_img").show();
+    })
+
+
+  });
+
+  socket.on('raw_data_loaded', function(data) {
+
+    dt_report_table(data.dt_hist,data.dt_bins)
+    $("#timestamp_attr").after("<p>Timestamp max: "+data.timestamps_max+"</p>")
+    $("#timestamp_attr").after("<p>Timestamp min: "+data.timestamps_min+"</p>")
+
+    $("#depth_attr").after("<p>Trace depth count: "+data.trace_depth_count+"</p>")
+    $("#depth_attr").after("<p>Depth interval, "+session.depth_unit+": "+data.depth_interval+"</p>")
+    $("#depth_attr").after("<p>Depth max, "+session.depth_unit+": "+data.depth_max+"</p>")
+    $("#depth_attr").after("<p>Depth min, "+session.depth_unit+": "+data.depth_min+"</p>")
+
+
+
+    $("#loading_img").hide();
+    $("#results").show();
+
+  });
+
+  function dt_report_table(hist,bins){
+    for(let i = 0; i < hist.length; i++){
+      if (hist[i]>0){
+        table_row='<tr>' +
+                  '  <td>'+bins[i]+'</td>' +
+                  '  <td>'+hist[i]+'</td>' +
+                  '</tr>'
+        $("#dt_table_body").append(table_row);
+      }
+    }
+  }
+
+
+
+
+
+</script>
+
+
+
+
+{% endblock %}

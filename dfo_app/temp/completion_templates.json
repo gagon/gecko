@@ -1,0 +1,52 @@
+{
+  "figure":{
+    "tubing":{
+      "type": "rect",
+      "line": {
+        "width": 1
+      },
+      "fillcolor": "rgb(194, 194, 194)"
+    },
+    "casing":{
+      "type": "rect",
+      "line": {
+        "width": 1
+      },
+      "fillcolor": "rgb(194, 194, 194)"
+    },
+    "perforation":{
+      "type": "rect",
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(163, 144, 144)",
+      "opacity":0.5
+    },
+    "esp":{
+      "type": "rect",
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(250, 0, 0)",
+      "opacity":0.5
+    },
+    "packer":{
+      "type": "rect",
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(33, 41, 48)",
+      "opacity":0.9
+    }
+  },
+  "id":{
+    "Casing":"casing",
+    "Perforation":"perforation",
+    "Tubing":"tubing",
+    "Other":"other",
+    "ESP":"esp",
+    "Gaslift mandrel":"gaslift",
+    "Production packer":"packer"
+  }
+
+}

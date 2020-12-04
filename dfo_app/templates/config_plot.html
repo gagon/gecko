@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-6">
+
+    {% for dnum in range(page_setup.dashboad_num) %}
+
+      <h3>Dashboard {{ dnum+1 }}</h3>
+      <label for="name" class="col-sm-2 col-form-label">Name</label>
+      <div class="col-sm-2">
+        <input type="text" class="form-control" id="name" value="DTS only">
+      </div>
+      <br>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Plot #</th>
+            <th scope="col">Type</th>
+            <th scope="col">Row</th>
+            <th scope="col">Column</th>
+            <th scope="col">Show</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pnum in range(page_setup.plot_num) %}
+            <tr>
+              <th scope="row">{{ pnum+1 }}</th>
+              <td>
+                <select class="form-control" id="exampleFormControlSelect1">
+                  <option></option>
+                  <option>Completion</option>
+                  <option>Inclination</option>
+                  <option>DTS waterfall</option>
+                  <option>DAS waterfall</option>
+                  <option>PT plot</option>
+                </select>
+              </td>
+              <td><input type="text" class="form-control" id="name" value=""></td>
+              <td><input type="text" class="form-control" id="name" value=""></td>
+              <td><input type="checkbox" class="form-check-input" id="exampleCheck1"></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <hr>
+
+    {% endfor %}
+
+    <button type="button" class="btn btn-info" id="save">Save</button>
+
+
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var session;
+  session={{ session|safe }};
+  // console.log(session);
+
+  $( document ).ready(function() {
+
+    $('#save').click(function(e) {
+      session=save_configs(session);
+      console.log(session);
+      socket.emit("save_session",session)
+    })
+
+  });
+
+  function save_configs(session){
+    session["well_name"]=$("#well_name").val()
+    session["output_dts_folder"]=$("#output_dts_folder").val()
+    session["downhole_data_fullpath"]=$("#downhole_data_fullpath").val()
+    session["well_completion_fullpath"]=$("#well_completion_fullpath").val()
+    session["well_inclination_fullpath"]=$("#well_inclination_fullpath").val()
+    session["well_logs_folder"]=$("#well_logs_folder").val()
+    return session
+  }
+
+
+  socket.on('saved', function(data) {
+    alert("Configurations saved!");
+  });
+
+</script>
+
+
+
+
+{% endblock %}

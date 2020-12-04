@@ -1,0 +1,27 @@
+{
+    "colormap": "Jet",
+    "depth_unit": "m",
+    "downhole_data_fullpath": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\pt.txt",
+    "dts_hour_shift": -21,
+    "integrated_plot_data": "DTS",
+    "norm_dts_folder": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\dts_waterfall\\flow_norm",
+    "output_dts_folder": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\dts_waterfall\\flow",
+    "pipe_id_unit": "in",
+    "pres_range": [
+        50,
+        200
+    ],
+    "pres_unit": "Bar",
+    "raw_dts_folder": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\all\\flow",
+    "temp_range": [
+        29.93,
+        30.05
+    ],
+    "temp_unit": "C",
+    "tformat": "%Y-%m-%dT%H_%M_%S",
+    "well_geothermal_fullpath": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\dts_geothermal\\geothermal.txt",
+    "well_inclination_fullpath": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\inclination.txt",
+    "well_name": "Well 809",
+    "zmax": 30,
+    "zmin": -5
+}

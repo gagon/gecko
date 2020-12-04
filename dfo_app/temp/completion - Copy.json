@@ -1,0 +1,112 @@
+{
+  "completion":[
+    {
+      "type": "rect",
+      "x0": 0,
+      "y0": 0,
+      "x1": 20,
+      "y1": 80,
+      "line": {
+        "width": 1
+      },
+      "fillcolor": "rgb(194, 194, 194)"
+    },{
+      "type": "rect",
+      "x0": 2,
+      "y0": 0,
+      "x1": 18,
+      "y1": 312.7,
+      "line": {
+        "width": 1
+      },
+      "fillcolor": "rgb(194, 194, 194)"
+    },{
+      "type": "rect",
+      "x0": 3,
+      "y0": 0,
+      "x1": 17,
+      "y1": 1956.22,
+      "line": {
+        "width": 1
+      },
+      "fillcolor": "rgb(194, 194, 194)"
+    },{
+      "type": "rect",
+      "x0": 6,
+      "y0": 0,
+      "x1": 14,
+      "y1": 1832,
+      "line": {
+        "width": 1
+      },
+      "fillcolor": "rgb(194, 194, 194)"
+    },{
+      "type": "rect",
+      "x0": 0,
+      "y0": 1776,
+      "x1": 20,
+      "y1": 1781,
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(163, 144, 144)",
+      "opacity":0.5
+    },{
+      "type": "rect",
+      "x0": 0,
+      "y0": 1792,
+      "x1": 20,
+      "y1": 1795,
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(163, 144, 144)",
+      "opacity":0.5
+    },{
+      "type": "rect",
+      "x0": 0,
+      "y0": 1797,
+      "x1": 20,
+      "y1": 1800,
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(163, 144, 144)",
+      "opacity":0.5
+    },{
+      "type": "rect",
+      "x0": 0,
+      "y0": 1804,
+      "x1": 20,
+      "y1": 1806,
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(163, 144, 144)",
+      "opacity":0.5
+    },{
+      "type": "rect",
+      "x0": 0,
+      "y0": 1808,
+      "x1": 20,
+      "y1": 1810,
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(163, 144, 144)",
+      "opacity":0.5
+    },{
+      "type": "rect",
+      "x0": 3,
+      "y0": 1640,
+      "x1": 17,
+      "y1": 1650,
+      "line": {
+        "width": 0
+      },
+      "fillcolor": "rgb(250, 0, 0)",
+      "opacity":0.5
+    }
+  ],
+  "completion_table":[]
+}

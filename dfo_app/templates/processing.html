@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-4">
+
+    <h4>Average by time</h4>
+    <form>
+      <div class="form-group row">
+        <label for="raw_dts_folder" class="col-lg-6 col-form-label">Original time, min</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="raw_dts_folder" value="{{session.raw_dts_folder}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="output_dts_folder" class="col-lg-6 col-form-label">Time, min</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="output_dts_folder" value="{{session.output_dts_folder}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="downhole_data_fullpath" class="col-lg-6 col-form-label">Method</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="downhole_data_fullpath" value="{{session.downhole_data_fullpath}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="well_completion_fullpath" class="col-lg-6 col-form-label">Moving average</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="well_completion_fullpath" value="{{session.well_completion_fullpath}}">
+        </div>
+      </div>
+    </form>
+
+    <hr>
+
+    <h4>Average by time</h4>
+    <form>
+      <div class="form-group row">
+        <label for="raw_dts_folder" class="col-lg-6 col-form-label">Original distance, m</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="raw_dts_folder" value="{{session.raw_dts_folder}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="output_dts_folder" class="col-lg-6 col-form-label">Distance, m </label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="output_dts_folder" value="{{session.output_dts_folder}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="downhole_data_fullpath" class="col-lg-6 col-form-label">Method</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="downhole_data_fullpath" value="{{session.downhole_data_fullpath}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="well_completion_fullpath" class="col-lg-6 col-form-label">Moving average</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="well_completion_fullpath" value="{{session.well_completion_fullpath}}">
+        </div>
+      </div>
+    </form>
+
+
+
+    <button type="button" class="btn btn-info" id="save">Process</button>
+    <button type="button" class="btn btn-success" id="save">Save data</button>
+
+
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card" style="height:600px;">
+      <div class="card-body">
+        No data to plot
+      </div>
+    </div>
+    <br>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-2 col-form-label">Enter start and end</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+    <button type="button" class="btn btn-info" id="save">Plot</button>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var session;
+  session={{ session|safe }};
+  // console.log(session);
+
+  $( document ).ready(function() {
+
+    $('#save').click(function(e) {
+      session=save_configs(session);
+      console.log(session);
+      socket.emit("save_session",session)
+    })
+
+  });
+
+  function save_configs(session){
+    session["well_name"]=$("#well_name").val()
+    session["output_dts_folder"]=$("#output_dts_folder").val()
+    session["downhole_data_fullpath"]=$("#downhole_data_fullpath").val()
+    session["well_completion_fullpath"]=$("#well_completion_fullpath").val()
+    session["well_inclination_fullpath"]=$("#well_inclination_fullpath").val()
+    session["well_logs_folder"]=$("#well_logs_folder").val()
+    return session
+  }
+
+
+  socket.on('saved', function(data) {
+    alert("Configurations saved!");
+  });
+
+</script>
+
+
+
+
+{% endblock %}

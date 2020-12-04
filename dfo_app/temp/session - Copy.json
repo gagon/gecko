@@ -1,0 +1,108 @@
+{
+    "colormap": "Jet",
+    "custom_colormap": {
+        "custom_colorscale1": [
+            [
+                "0.0",
+                "rgb(165,0,38)"
+            ],
+            [
+                "0.111111111111",
+                "rgb(215,48,39)"
+            ],
+            [
+                "0.222222222222",
+                "rgb(244,109,67)"
+            ],
+            [
+                "0.333333333333",
+                "rgb(253,174,97)"
+            ],
+            [
+                "0.444444444444",
+                "rgb(254,224,144)"
+            ],
+            [
+                "0.555555555556",
+                "rgb(224,243,248)"
+            ],
+            [
+                "0.666666666667",
+                "rgb(171,217,233)"
+            ],
+            [
+                "0.777777777778",
+                "rgb(116,173,209)"
+            ],
+            [
+                "0.888888888889",
+                "rgb(69,117,180)"
+            ],
+            [
+                "1.0",
+                "rgb(49,54,149)"
+            ]
+        ],
+        "custom_colorscale2": [
+            [
+                "0.0",
+                "rgb(64, 64, 64)"
+            ],
+            [
+                "0.111111111111",
+                "rgb(76, 76, 76)"
+            ],
+            [
+                "0.222222222222",
+                "rgb(89, 89, 89)"
+            ],
+            [
+                "0.333333333333",
+                "rgb(102, 102, 102)"
+            ],
+            [
+                "0.444444444444",
+                "rgb(114, 114, 114)"
+            ],
+            [
+                "0.555555555556",
+                "rgb(140, 140, 140)"
+            ],
+            [
+                "0.666666666667",
+                "rgb(153, 153, 153)"
+            ],
+            [
+                "0.777777777778",
+                "rgb(165, 165, 165)"
+            ],
+            [
+                "0.888888888889",
+                "rgb(178, 178, 178)"
+            ],
+            [
+                "1.0",
+                "rgb(191, 191, 191)"
+            ]
+        ]
+    },
+    "downhole_data_fullpath": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\pt.txt",
+    "integrated_plot_data": "DTS",
+    "norm_dts_folder": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\dts_waterfall\\flow_norm",
+    "output_dts_folder": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\dts_waterfall\\flow",
+    "pres_range": [
+        50,
+        200
+    ],
+    "raw_dts_folder": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\all\\flow",
+    "temp_range": [
+        29.93,
+        30.05
+    ],
+    "tformat": "%Y-%m-%dT%H_%M_%S",
+    "well_geothermal_fullpath": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\dts_geothermal\\geothermal.txt",
+    "well_inclination_fullpath": "C:\\Users\\B.Zhumabayev\\Desktop\\FO\\gecko\\data\\inclination.txt",
+    "well_name": "Well A",
+    "zmax": 40,
+    "zmin": 0
+}

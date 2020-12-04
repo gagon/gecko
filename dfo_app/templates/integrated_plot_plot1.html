@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+
+  <div class="col-lg-12">
+    <h3 id="loading_text">Loading</h3>
+    <img src="/static/img/loading.gif" alt="" id="loading_img" style="height:50px">
+    <a href="#" data-toggle="modal" data-target="#exampleModal" id="configure_plot_btn" style="display: none;">Configure plot</a>
+    <div id="dts_waterfall" style="width:100%,height:600px"></div>
+  </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Configure plots</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <p>Waterfall plot</p>
+        <label for="">Temperature min, {{session.temp_unit}}</label>
+        <input type="text" class="form-control" id="zmin" value="{{session.zmin}}">
+        <label for="">Temperature max, {{session.temp_unit}}</label>
+        <input type="text" class="form-control" id="zmax" value="{{session.zmax}}">
+        <label for="">Colormap</label>
+        <!-- <input type="text" class="form-control" id="colormap" value="{{session.colormap}}"> -->
+        <select class="form-control" id="colormap">
+          <option>Jet</option>
+          <option>YlOrRd</option>
+          <option>YlGnBu</option>
+          <option>RdBu</option>
+          <option>Portland</option>
+          <option>Hot</option>
+          <option>Greys</option>
+          <option>Electric</option>
+        </select>
+        <hr>
+        <p>Pressure and Temperature plot</p>
+        <label for="">Temperature min, {{ uom.temp_unit }}</label>
+        <input type="text" class="form-control" id="temp_min" value="{{session.temp_range[0]}}">
+        <label for="">Temperature max, {{ uom.temp_unit }}</label>
+        <input type="text" class="form-control" id="temp_max" value="{{session.temp_range[1]}}">
+        <label for="">Pressure min, {{ uom.pres_unit }}</label>
+        <input type="text" class="form-control" id="pres_min" value="{{session.pres_range[0]}}">
+        <label for="">Pressure max, {{ uom.pres_unit }}</label>
+        <input type="text" class="form-control" id="pres_max" value="{{session.pres_range[1]}}">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" id="save">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+  $("#configure_plot_btn").hide();
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var session;
+  session={{ session|safe }};
+
+  var configs={};
+
+  if (session.colormap.indexOf("custom_") !== -1){
+    var colormap=session.custom_colormap[session.colormap];
+  }else{
+    var colormap=session.colormap;
+  }
+
+  // $('#colormap').find('option[text="'+colormap+'"]').val();
+  console.log(colormap);
+  // $('#colormap option[value="'+colormap+'"]').attr('selected', true);
+  $('select option:contains("'+colormap+'")').attr('selected', true);
+
+  var dts_data = {
+    z: session.dts_data,
+    x: session.dts_timestamps,
+    y: session.dts_depths,
+    type: 'heatmap',
+    xaxis: "x4",
+    yaxis: "y",
+    colorscale: colormap,
+    colorbar:{
+      // len: 0.35,
+      title: session.temp_unit,
+      titleside:'top',
+      // tickvals:[0,50,100],
+      // tickfont: {color: 'red'},
+      // len:0.7,
+      // y:-1,
+      thickness:10
+
+    },
+    zmin:session.zmin,
+    zmax:session.zmax
+  }
+
+  var completion_data = {
+    x: [],
+    y: [],
+    type: 'line',
+    xaxis: "x",
+    yaxis: "y",
+  }
+
+  var inclination_data = {
+    x: session.inclination[1],
+    y: session.inclination[0],
+    type: 'line',
+    xaxis: "x2",
+    yaxis: "y",
+    mode: 'lines'
+  }
+
+  var geothermal_trace = {
+    x: session.geothermal[1],
+    y: session.geothermal[0],
+    type: 'line',
+    xaxis: "x3",
+    yaxis: "y",
+    mode: 'lines'
+  }
+
+  var trace1 = {
+    x: session.pt[0],
+    y: session.pt[1],
+    mode: 'markers',
+    type: 'scatter',
+    xaxis: "x4",
+    yaxis: "y5",
+    marker:{color: "green"}
+  };
+
+  var trace2 = {
+    x: session.pt[0],
+    y: session.pt[2],
+    mode: 'markers',
+    type: 'scatter',
+    xaxis: "x4",
+    yaxis: "y6",
+    marker:{color: "red"}
+  };
+
+  var data = [completion_data,inclination_data,geothermal_trace,dts_data,trace1,trace2];
+
+  var layout = {
+
+    height: 800,
+    margin: {
+      l: 80,
+      r: 100,
+      b: 90,
+      t: 70,
+      // pad: 4
+    },
+    showlegend:false,
+    xaxis:{
+      domain:[0,0.05],
+      range:[0,20],
+      // visible: false,
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+      tickmode:"array",
+      tickvals:[],
+      ticktext:[],
+
+    },
+    yaxis:{
+      range:[1950,136],
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+      domain:[0.3,1],
+      title: {
+        text: 'Depth, '+session.depth_unit,
+        font:{
+          size:12
+        }
+      }
+    },
+    xaxis2:{
+      domain:[0.07,0.13],
+      // side:"top",
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+    },
+    yaxis2:{
+      // anchor: "x2",
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+      // ticks:'outside',
+      showline:true,
+      domain:[0.3,1],
+    },
+    xaxis3:{
+      domain:[0.15,0.20],
+      // side:"top",
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+    },
+    yaxis3:{
+      domain:[0.3,1],
+    },
+    xaxis4:{
+      domain:[0.22,0.97],
+      range:[session.date_min,session.date_max],
+    },
+    yaxis4:{
+      domain:[0.3,1],
+      anchor: "x4",
+    },
+    xaxis5:{
+      domain:[0.22,0.97],
+      linecolor: 'black',
+      linewidth: 0,
+
+      // side:"bottom",
+    },
+    yaxis5:{
+      domain:[0,0.2],
+      linecolor: 'black',
+      linewidth: 0,
+      anchor: "x4",
+      title: {
+        text: 'Pressure, {{ uom.pres_unit }}',
+        font:{
+          size:12,
+          color: 'green'
+        }
+      },
+      range:session.pres_range
+    },
+    yaxis6:{
+      domain:[0,0.2],
+      linecolor: 'black',
+      linewidth: 0,
+      anchor: "x4",
+      side:"right",
+      overlaying: 'y5',
+      title: {
+        text: 'Temperature, {{ uom.temp_unit }}',
+        font:{
+          size:12,
+          color: 'red'
+        }
+      },
+      range:session.temp_range
+    },
+    shapes:session.completion,
+    annotations: [{
+      text: "Completion",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.004, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    },{
+      text: "Inclination (deg)",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.07, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    },{
+      text: "Geothermal",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.15, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    },{
+      text: session.well_name + " - DTS waterfall plot",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.6, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    }]
+  };
+
+  Plotly.newPlot('dts_waterfall', data, layout);
+
+  $("#loading_img").hide();
+  $("#loading_text").hide();
+  $("#configure_plot_btn").show();
+
+  $( document ).ready(function() {
+    $('#save').click(function(e) {
+      configs=save_configs();
+      socket.emit("save_ranges",configs)
+    })
+  });
+
+
+  function save_configs(){
+    zrange=[parseFloat($("#zmin").val()),parseFloat($("#zmax").val())]
+    temp_range=[parseFloat($("#temp_min").val()),parseFloat($("#temp_max").val())]
+    pres_range=[parseFloat($("#pres_min").val()),parseFloat($("#pres_max").val())]
+    colormap=$("#colormap").val()
+    configs["zrange"]=zrange
+    configs["colormap"]=colormap
+    configs["temp_range"]=temp_range
+    configs["pres_range"]=pres_range
+
+    return configs
+  }
+  // console.log(session.dts_timestamps);
+
+
+  socket.on('saved', function(data) {
+    alert("Configurations saved!");
+    location.reload()
+  });
+
+</script>
+
+{% endblock %}

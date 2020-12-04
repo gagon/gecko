@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+
+  <div class="col-lg-12">
+
+    <div id="dts_waterfall" style="width:100%,height:1200px"></div>
+
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+  var session;
+  session={{ session|safe }};
+
+
+  var dts_data = {
+    z: session.dts_data,
+    x:session.dts_timestamps,
+    type: 'heatmap',
+    xaxis: "x4",
+    yaxis: "y",
+    colorscale: 'Jet',
+    colorbar:{
+      // len: 0.35,
+      title: 'dB',
+      titleside:'top',
+      // tickvals:[0,50,100],
+      // tickfont: {color: 'red'}
+    }
+  }
+
+  var completion_data = {
+    x: [],
+    y: [],
+    type: 'line',
+    xaxis: "x",
+    yaxis: "y",
+  }
+
+  var inclination_data = {
+    x: [10,15,75,90],
+    y: [0,200,500,1000],
+    type: 'line',
+    xaxis: "x2",
+    yaxis: "y",
+    mode: 'lines'
+  }
+
+  var geothermal_trace = {
+    x: [10,20,40,80],
+    y: [0,200,500,1000],
+    type: 'line',
+    xaxis: "x3",
+    yaxis: "y",
+    mode: 'lines'
+  }
+
+  var data = [completion_data,inclination_data,geothermal_trace,dts_data];
+
+  var layout = {
+
+    height: 800,
+    margin: {
+      l: 50,
+      r: 50,
+      b: 90,
+      t: 70,
+      // pad: 4
+    },
+    showlegend:false,
+    xaxis:{
+      domain:[0,0.05],
+      range:[0,20],
+      // visible: false,
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+      tickmode:"array",
+      tickvals:[],
+      ticktext:[]
+    },
+    yaxis:{
+      range:[999,0],
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true
+    },
+    xaxis2:{
+      domain:[0.07,0.13],
+      side:"top",
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+    },
+    yaxis2:{
+      // anchor: "x2",
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+      // ticks:'outside',
+      showline:true
+    },
+    xaxis3:{
+      domain:[0.15,0.20],
+      side:"top",
+      linecolor: 'black',
+      linewidth: 0,
+      mirror: true,
+    },
+    yaxis3:{
+    },
+    xaxis4:{
+      domain:[0.22,1],
+    },
+    yaxis4:{
+    },
+    shapes:[{
+      type: 'rect',
+      x0: 5,
+      y0: 0,
+      x1: 15,
+      y1: 700,
+      line: {
+        // color: 'rgba(128, 0, 128, 1)',
+        width: 0
+      },
+      fillcolor: 'rgb(130, 130, 130)'
+    },{
+      type: 'rect',
+      x0: 0,
+      y0: 500,
+      x1: 5,
+      y1: 550,
+      line: {
+        // color: 'rgba(128, 0, 128, 1)',
+        width: 0
+      },
+      fillcolor: 'rgb(163, 144, 144)'
+    },{
+      type: 'rect',
+      x0: 15,
+      y0: 500,
+      x1: 20,
+      y1: 550,
+      line: {
+        // color: 'rgba(128, 0, 128, 1)',
+        width: 0
+      },
+      fillcolor: 'rgb(163, 144, 144)'
+    },{
+      type: 'line',
+      x0: 0,
+      y0: 750,
+      x1: 20,
+      y1: 750,
+      line: {
+        color: 'rgb(255, 0, 0)',
+        width: 2
+      }
+    },{
+      type: 'line',
+      x0: 0,
+      y0: 760,
+      x1: 20,
+      y1: 760,
+      line: {
+        color: 'rgb(255, 0, 0)',
+        width: 2
+      }
+    },{
+      type: 'line',
+      x0: 0,
+      y0: 770,
+      x1: 20,
+      y1: 770,
+      line: {
+        color: 'rgb(255, 0, 0)',
+        width: 2
+      }
+    },{
+      type: 'line',
+      x0: 0,
+      y0: 780,
+      x1: 20,
+      y1: 780,
+      line: {
+        color: 'rgb(255, 0, 0)',
+        width: 2
+      }
+    },{
+      type: 'line',
+      x0: 0,
+      y0: 790,
+      x1: 20,
+      y1: 790,
+      line: {
+        color: 'rgb(255, 0, 0)',
+        width: 2
+      }
+    },{
+      type: 'line',
+      x0: 0,
+      y0: 800,
+      x1: 20,
+      y1: 800,
+      line: {
+        color: 'rgb(255, 0, 0)',
+        width: 2
+      }
+    }],
+    annotations: [{
+      text: "Completion",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.004, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    },{
+      text: "Inclination (deg)",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.07, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    },{
+      text: "Geothermal",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.15, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    },{
+      text: "DAS waterfall plot",
+      font: {
+        size: 12,
+      },
+      showarrow: false,
+      align: 'center',
+      x: 0.6, //position in x domain
+      y: 1.05, //position in y domain
+      xref: 'paper',
+      yref: 'paper',
+    }]
+  };
+
+  Plotly.newPlot('dts_waterfall', data, layout);
+
+
+
+  // console.log(session.dts_timestamps);
+
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-4">
+    <label for="exampleFormControlInput1">Datetime start - format YYYY-mm-dd hh:mm:ss</label>
+    <input type="text" class="form-control" id="start" value="2017-11-30 05:00:00" required>
+    <label for="exampleFormControlInput1">Datetime end - format YYYY-mm-dd hh:mm:ss</label>
+    <input type="text" class="form-control" id="end" value="2017-11-30 06:00:00" required>
+    <button type="button" class="btn btn-info" id="calc_geothermal" style="width:100%;margin-top:10px;">Calculate geothermal</button>
+
+    <button type="button" class="btn btn-success" id="calc_norm_dts" style="width:100%;margin-top:30px;">Calculate DTS-geothermal (norm)</button>
+
+  </div>
+  <div class="col-lg-4">
+    <div id="plot_save_div">
+      <div id="dts_geothermal" style="width:100%,height:800px"></div>
+      <button type="button" class="btn btn-info" id="save_geothermal" style="width:100%;margin-top:10px;">Save geothermal</button>
+      <p>Geothermal file to save (edit in Setup): {{session.well_geothermal_fullpath}}</p>
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var session;
+  session={{ session|safe }};
+
+
+  $("#plot_save_div").hide();
+  $("#calc_norm_dts").hide();
+
+
+  $( document ).ready(function() {
+
+
+
+    $('#calc_geothermal').click(function(e) {
+      start=$("#start").val()
+      end=$("#end").val()
+      socket.emit("calc_geothermal",start,end)
+    })
+
+
+    $('#save_geothermal').click(function(e) {
+      socket.emit("save_geothermal",session)
+    })
+
+    $('#calc_norm_dts').click(function(e) {
+      socket.emit("calc_norm_dts")
+    })
+
+    socket.on('plot_geothermal', function(data) {
+      // alert("hi")
+      var trace1 = {
+        x: data.temperature,
+        y: data.depth,
+        type: 'scatter'
+      };
+      var d = [trace1];
+      var layout={
+        title:'Geothermal',
+        height: 800,
+        yaxis:{
+          autorange:"reversed",
+          title: "Depth, "+session.depth_unit
+        },
+        xaxis:{
+          // side:"top",
+          title: "Temperature, "+session.temp_unit
+        }
+      }
+      Plotly.newPlot('dts_geothermal', d, layout);
+
+      session["geothermal_trace"]=data
+
+      $("#plot_save_div").show();
+    });
+
+
+    socket.on('geothermal_saved', function(e) {
+      alert("Geothermal saved")
+      $("#calc_norm_dts").show();
+    });
+
+  });
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-lg-4">
+
+    <form>
+      <div class="form-group row">
+        <label for="well_name" class="col-lg-6 col-form-label">Calibration method</label>
+        <div class="col-lg-4">
+          <select class="form-control" id="exampleFormControlSelect1">
+            <option></option>
+            <option>Completion</option>
+            <option>Inclination</option>
+            <option>DTS waterfall</option>
+            <option>DAS waterfall</option>
+            <option>PT plot</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="raw_dts_folder" class="col-lg-6 col-form-label">Fiber length, m</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="raw_dts_folder" value="{{session.raw_dts_folder}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="output_dts_folder" class="col-lg-6 col-form-label">Heat mark 1 (from report), m</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="output_dts_folder" value="{{session.output_dts_folder}}">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="downhole_data_fullpath" class="col-lg-6 col-form-label">Heat mark 2 (from report), m</label>
+        <div class="col-lg-4">
+          <input type="text" class="form-control" id="downhole_data_fullpath" value="{{session.downhole_data_fullpath}}">
+        </div>
+      </div>
+    </form>
+    <div class="form-group row">
+      <label for="well_completion_fullpath" class="col-lg-6 col-form-label">Distance to zero ref, m</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_completion_fullpath" value="{{session.well_completion_fullpath}}">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="well_inclination_fullpath" class="col-lg-6 col-form-label">Overstuff</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_inclination_fullpath" value="{{session.well_inclination_fullpath}}">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-6 col-form-label">Splice depth min</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-6 col-form-label">Splice depth max</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-6 col-form-label">Heat mark 1 min (on plot), m</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-6 col-form-label">Heat mark 1 max (on plot), m</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-6 col-form-label">Gauge temperature data</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-info" id="save">Save</button>
+
+
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card" style="height:600px;">
+      <div class="card-body">
+        Select traces to QC
+      </div>
+    </div>
+    <br>
+    <div class="form-group row">
+      <label for="well_logs_folder" class="col-lg-2 col-form-label">Enter timestamp of trace</label>
+      <div class="col-lg-4">
+        <input type="text" class="form-control" id="well_logs_folder" value="{{session.well_logs_folder}}">
+      </div>
+    </div>
+    <button type="button" class="btn btn-info" id="save">Plot</button>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var session;
+  session={{ session|safe }};
+  // console.log(session);
+
+  $( document ).ready(function() {
+
+    $('#save').click(function(e) {
+      session=save_configs(session);
+      console.log(session);
+      socket.emit("save_session",session)
+    })
+
+  });
+
+  function save_configs(session){
+    session["well_name"]=$("#well_name").val()
+    session["output_dts_folder"]=$("#output_dts_folder").val()
+    session["downhole_data_fullpath"]=$("#downhole_data_fullpath").val()
+    session["well_completion_fullpath"]=$("#well_completion_fullpath").val()
+    session["well_inclination_fullpath"]=$("#well_inclination_fullpath").val()
+    session["well_logs_folder"]=$("#well_logs_folder").val()
+    return session
+  }
+
+
+  socket.on('saved', function(data) {
+    alert("Configurations saved!");
+  });
+
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{
+  "dashboards":[
+    [
+      {
+        "type":"Completion",
+        "row":1,
+        "column":1,
+        "show":1
+      },
+      {
+        "type":"Inclination",
+        "row":1,
+        "column":2,
+        "show":1
+      },
+      {
+        "type":"Geothermal",
+        "row":1,
+        "column":3,
+        "show":1
+      },
+      {
+        "type":"DTS waterfall",
+        "row":1,
+        "column":4,
+        "show":1
+      }
+    ],
+    [
+      {
+        "type":"Completion",
+        "row":1,
+        "column":1,
+        "show":1
+      },
+      {
+        "type":"Inclination",
+        "row":1,
+        "column":2,
+        "show":1
+      },
+      {
+        "type":"Geothermal",
+        "row":1,
+        "column":3,
+        "show":1
+      },
+      {
+        "type":"DAS waterfall",
+        "row":1,
+        "column":4,
+        "show":1
+      }
+    ]
+  ]
+}
